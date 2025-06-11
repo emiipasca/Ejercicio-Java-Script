@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UVA - Ejercicio Datos Personales</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .contenedor {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .hidden {
+            display: none;
+        }
+        .pagina-inicio {
+            text-align: center;
+            animation: fadeIn 1s ease-in;
+        }
+        .mensaje-inicio {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .dias-info {
+            background-color: #e7f3ff;
+            color: #0c5460;
+            border: 1px solid #b8daff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .modify-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .emoji {
+            font-size: 2em;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <!-- PÁGINA 1: Formulario de registro -->
+        <div id="registroPage">
+            <h1>UVA - Java Script</h1>
+            <h2>Registro de Usuario</h2>
+            
+            <form id="personalForm">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" id="apellido" name="apellido" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+                </div>
+                
+                <button type="submit">Continuar</button>
+            </form>
+        </div>
+
+        <!-- PÁGINA 2: Bienvenida y información -->
+        <div id="bienvenidaPage" class="hidden">
+            <div class="pagina-inicio">
+                <h1>🎉 ¡Bienvenido/a!</h1>
+                
+                <div class="mensaje-inicio">
+                    <div class="emoji">👋</div>
+                    <h2 id="nombreBienvenida"></h2>
+                    <p>Te damos la bienvenida al sistema</p>
+                    <p id="fechaRegistro"></p>
+                </div>
+
+                <div class="dias-info">
+                    <div class="emoji">📅</div>
+                    <h3>Información Personal</h3>
+                    <p id="diasVividos"></p>
+                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables para almacenar datos del usuario
+        let datosUsuario = {
+            nombre: '',
+            apellido: '',
+            fechaNacimiento: ''
+        };
+
+        // Ejercicio 1: Procesar formulario y cambiar a página de bienvenida
+        document.getElementById('personalForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Guardar datos del usuario
+            datosUsuario.nombre = document.getElementById('nombre').value;
+            datosUsuario.apellido = document.getElementById('apellido').value;
+            datosUsuario.fechaNacimiento = document.getElementById('fechaNacimiento').value;
+            
+            // Cambiar a la página de bienvenida
+            irAPaginaBienvenida();
+        });
+
+        function irAPaginaBienvenida() {
+            // Ocultar página de registro
+            document.getElementById('registroPage').classList.add('hidden');
+            
+            // Mostrar página de bienvenida
+            document.getElementById('bienvenidaPage').classList.remove('hidden');
+            
+            // Llenar información de bienvenida
+            document.getElementById('nombreBienvenida').textContent = 
+                `Hola ${datosUsuario.nombre} ${datosUsuario.apellido}`;
+            
+            document.getElementById('fechaRegistro').textContent = 
+                `Fecha de nacimiento: ${formatearFecha(datosUsuario.fechaNacimiento)}`;
+            
+            // Ejercicio 3: Calcular y mostrar días vividos
+            calcularYMostrarDias();
+        }
+
+        // Ejercicio 3: Calcular días vividos desde el nacimiento
+        function calcularYMostrarDias() {
+            const fechaNacimiento = new Date(datosUsuario.fechaNacimiento);
+            const fechaActual = new Date();
+            
+            // Calcular diferencia en milisegundos
+            const diferenciaTiempo = fechaActual.getTime() - fechaNacimiento.getTime();
+            
+            // Convertir a días
+            const diasVividos = Math.floor(diferenciaTiempo / (1000 * 3600 * 24));
+            
+            document.getElementById('diasVividos').innerHTML = 
+                `<strong>${datosUsuario.nombre}</strong>, has vivido aproximadamente <strong>${diasVividos.toLocaleString()}</strong> días desde tu nacimiento.`;
+        }
+
+        // Ejercicio 2: Funciones para modificar datos
+        function mostrarFormularioModificacion() {
+            document.getElementById('modifyForm').classList.remove('hidden');
+        }
+
+        function cancelarModificacion() {
+            document.getElementById('modifyForm').classList.add('hidden');
+            document.getElementById('actualizarForm').reset();
+        }
+
+        document.getElementById('actualizarForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Actualizar datos si se proporcionan nuevos valores
+            const nuevoNombre = document.getElementById('nuevoNombre').value;
+            const nuevoApellido = document.getElementById('nuevoApellido').value;
+            const nuevaFecha = document.getElementById('nuevaFecha').value;
+            
+            if (nuevoNombre) datosUsuario.nombre = nuevoNombre;
+            if (nuevoApellido) datosUsuario.apellido = nuevoApellido;
+            if (nuevaFecha) datosUsuario.fechaNacimiento = nuevaFecha;
+            
+            // Actualizar la información mostrada
+            document.getElementById('nombreBienvenida').textContent = 
+                `Hola ${datosUsuario.nombre} ${datosUsuario.apellido}`;
+            
+            document.getElementById('fechaRegistro').textContent = 
+                `Fecha de nacimiento: ${formatearFecha(datosUsuario.fechaNacimiento)}`;
+            
+            calcularYMostrarDias();
+            
+            // Ocultar formulario y limpiar
+            cancelarModificacion();
+            
+            alert('¡Datos actualizados correctamente!');
+        });
+
+        function formatearFecha(fecha) {
+            const fechaObj = new Date(fecha);
+            return fechaObj.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+    </script>
+</body>
+</html>
